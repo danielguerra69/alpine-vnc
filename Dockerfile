@@ -14,4 +14,5 @@ RUN apk add xvfb openbox xterm@testing supervisor sudo \
 && rm -rf /apk /tmp/* /var/cache/apk/*
 ADD etc /etc
 EXPOSE 5900
+USER alpine
 CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]
