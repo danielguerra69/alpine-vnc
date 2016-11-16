@@ -13,6 +13,7 @@ RUN apk add xvfb openbox xterm@testing supervisor sudo \
 && echo "alpine    ALL=(ALL) ALL" >> /etc/sudoers \
 && rm -rf /apk /tmp/* /var/cache/apk/*
 ADD etc /etc
+WORKDIR /home/alpine
 EXPOSE 5900
 USER alpine
 CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]
