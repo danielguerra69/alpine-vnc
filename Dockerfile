@@ -1,4 +1,4 @@
-FROM danielguerra/alpine-sdk-build:3.4 as builder
+FROM danielguerra/alpine-sdk-build:3.3 as builder
 MAINTAINER Daniel Guerra
 RUN docker-entrypoint.sh
 USER root
@@ -10,7 +10,7 @@ USER sdk
 RUN build unmaintained x11vnc
 
 
-FROM alpine:3.4
+FROM alpine:3.3
 MAINTAINER Daniel Guerra
 COPY --from=builder /home/sdk/.abuild /tmp/.abuild
 RUN find /tmp/.abuild -name "*.pub" -exec cp {} /etc/apk/keys \;
