@@ -1,16 +1,23 @@
-FROM alpine:3.4
+FROM danielguerra/alpine-sdk-build:3.5 as builder
 MAINTAINER Daniel Guerra
-ADD /apk /apk
-RUN cp /apk/.abuild/-58b7ee0c.rsa.pub /etc/apk/keys
-RUN apk --update add /apk/ossp-uuid-1.6.2-r0.apk
-RUN apk add /apk/ossp-uuid-dev-1.6.2-r0.apk
-RUN apk add /apk/x11vnc-0.9.13-r0.apk
-RUN apk add xvfb openbox xfce4-terminal supervisor sudo \
+RUN docker-entrypoint.sh
+RUN echo "sdk" | sudo -S apk add libxtst-dev xorg-server-dev
+ADD x11vnc /tmp/aports/unmaintained/x11vnc
+RUN build unmaintained x11vnc
+
+
+FROM alpine:3.5
+MAINTAINER Daniel Guerra
+COPY --from=builder /home/sdk/.abuild/ /tmp/.abuild
+RUN find /tmp/.abuild -name "*.pub" -exec cp {} /etc/apk/keys \; 
+COPY --from=builder /home/sdk/packages/unmaintained/x86_64/x11vnc-0.9.13-r0.apk /tmp/x11vnc-0.9.13-r0.apk
+RUN apk --no-cache --update add /tmp/x11vnc-0.9.13-r0.apk
+RUN apk --no-cache add xvfb openbox xfce4-terminal supervisor sudo \
 && addgroup alpine \
 && adduser  -G alpine -s /bin/sh -D alpine \
 && echo "alpine:alpine" | /usr/sbin/chpasswd \
 && echo "alpine    ALL=(ALL) ALL" >> /etc/sudoers \
-&& rm -rf /apk /tmp/* /var/cache/apk/*
+&& rm -rf /tmp/* /var/cache/apk/*
 ADD etc /etc
 WORKDIR /home/alpine
 EXPOSE 5900
