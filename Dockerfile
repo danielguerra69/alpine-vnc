@@ -1,6 +1,5 @@
 FROM danielguerra/alpine-sdk-build:3.4 as builder
 MAINTAINER Daniel Guerra
-RUN echo bla
 RUN docker-entrypoint.sh
 USER root
 RUN apk add libxtst-dev xorg-server-dev
